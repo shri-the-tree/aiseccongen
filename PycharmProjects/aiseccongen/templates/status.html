@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generation Status - AI Security Blog Generator</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🛡️ AI Security Blog Generator</h1>
+            <a href="/" class="back-link">← Back to Generator</a>
+        </header>
+
+        <main>
+            <div class="status-panel">
+                {% if status.in_progress %}
+                <div class="status-in-progress">
+                    <div class="spinner"></div>
+                    <h2>Generating Content...</h2>
+                    <p>Topic: <strong>{{ status.current_topic }}</strong></p>
+                    <p>The AI agents are working on your content. This may take 2-5 minutes.</p>
+
+                    <div class="progress-steps">
+                        <div class="progress-step active">🔍 Research Agent</div>
+                        <div class="progress-step">✍️ Writer Agent</div>
+                        <div class="progress-step">✅ Validator Agent</div>
+                    </div>
+                </div>
+
+                {% elif status.result %}
+                <div class="status-complete">
+                    <h2>✅ Generation Complete!</h2>
+                    <p>Topic: <strong>{{ status.result.topic }}</strong></p>
+                    <p>Word Count: {{ status.result.word_count }} words</p>
+
+                    <div class="result-actions">
+                        <a href="/view/{{ status.result.filename }}" class="view-btn">
+                            📖 View Content
+                        </a>
+                        <a href="/" class="generate-btn">
+                            🚀 Generate Another
+                        </a>
+                    </div>
+
+                    <div class="content-preview">
+                        <h3>Preview:</h3>
+                        <div class="preview-text">
+                            {{ status.result.content[:500] }}...
+                        </div>
+                    </div>
+                </div>
+
+                {% elif status.error %}
+                <div class="status-error">
+                    <h2>❌ Generation Failed</h2>
+                    <p>Error: {{ status.error }}</p>
+                    <a href="/" class="generate-btn">Try Again</a>
+                </div>
+
+                {% else %}
+                <div class="status-idle">
+                    <h2>No Generation in Progress</h2>
+                    <a href="/" class="generate-btn">Start Generation</a>
+                </div>
+                {% endif %}
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Auto-refresh status if generation is in progress
+        {% if status.in_progress %}
+        setTimeout(() => {
+            location.reload();
+        }, 10000); // Refresh every 10 seconds
+        {% endif %}
+    </script>
+</body>
+</html>

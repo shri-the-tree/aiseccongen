@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Security Blog Generator</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🛡️ AI Security Blog Generator</h1>
+            <p>Generate comprehensive AI security content using CrewAI multi-agent system</p>
+        </header>
+
+        <main>
+            <form action="/generate" method="POST" class="generation-form">
+                <div class="form-group">
+                    <label for="topic">Select Topic:</label>
+                    <select name="topic" id="topic">
+                        <option value="">-- Choose a topic --</option>
+                        {% for topic in topics %}
+                        <option value="{{ topic }}">{{ topic }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="custom_topic">Or Enter Custom Topic:</label>
+                    <input type="text" name="custom_topic" id="custom_topic"
+                           placeholder="e.g., AI Model Security in Healthcare">
+                </div>
+
+                <div class="form-group">
+                    <label for="word_count">Target Word Count:</label>
+                    <input type="number" name="word_count" id="word_count"
+                           value="1000" min="500" max="2000">
+                </div>
+
+                <button type="submit" class="generate-btn">
+                    🚀 Generate Article
+                </button>
+            </form>
+
+            <div class="info-panel">
+                <h3>How it works:</h3>
+                <div class="process-steps">
+                    <div class="step">
+                        <span class="step-number">1</span>
+                        <span class="step-text">Research Agent searches for latest information</span>
+                    </div>
+                    <div class="step">
+                        <span class="step-number">2</span>
+                        <span class="step-text">Writer Agent creates comprehensive content</span>
+                    </div>
+                    <div class="step">
+                        <span class="step-number">3</span>
+                        <span class="step-text">Validator Agent ensures quality and accuracy</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="generated-files">
+                <h3>Previously Generated:</h3>
+                <div id="file-list">Loading...</div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Load previously generated files
+        fetch('/api/generated')
+            .then(response => response.json())
+            .then(files => {
+                const fileList = document.getElementById('file-list');
+                if (files.length === 0) {
+                    fileList.innerHTML = '<p>No files generated yet.</p>';
+                } else {
+                    fileList.innerHTML = files.map(file =>
+                        `<div class="file-item">
+                            <a href="/view/${file.filename}">${file.filename}</a>
+                            <span class="file-meta">${file.created} • ${file.size} bytes</span>
+                        </div>`
+                    ).join('');
+                }
+            })
+            .catch(error => {
+                document.getElementById('file-list').innerHTML = '<p>Error loading files.</p>';
+            });
+
+        // Form validation
+        document.querySelector('.generation-form').addEventListener('submit', function(e) {
+            const topic = document.getElementById('topic').value;
+            const customTopic = document.getElementById('custom_topic').value;
+
+            if (!topic && !customTopic) {
+                e.preventDefault();
+                alert('Please select a topic or enter a custom topic.');
+            }
+        });
+    </script>
+</body>
+</html>

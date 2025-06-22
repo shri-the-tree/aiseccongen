@@ -1,0 +1,10 @@
+# AI Security Blog Generator - Requirements
+crewai
+crewai-tools
+flask
+requests
+beautifulsoup4
+python-dotenv
+openai # For Groq compatibility
+duckduckgo-search
+markdown
